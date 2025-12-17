@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.assignmentorufy.ui.theme.navigation.Screen
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,7 +110,9 @@ fun HomeScreen(
                         Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
                     } else {
                         val finalUrl = viewModel.getFinalUrl()
-                        navController.navigate("webview/$finalUrl")
+                        val encodedUrl = URLEncoder.encode(finalUrl, StandardCharsets.UTF_8.toString())
+                        navController.navigate("webview/$encodedUrl")
+
                     }
                 },
                 modifier = Modifier
