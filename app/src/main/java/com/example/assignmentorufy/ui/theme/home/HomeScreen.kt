@@ -30,6 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.assignmentorufy.data.local.db.AppDatabase
+import com.example.assignmentorufy.data.local.entity.UrlEntity
 import com.example.assignmentorufy.ui.theme.navigation.Screen
+import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -50,6 +56,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val dao = remember {
+        AppDatabase.getDatabase(context).urlDao()
+    }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -110,9 +120,23 @@ fun HomeScreen(
                         Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
                     } else {
                         val finalUrl = viewModel.getFinalUrl()
-                        val encodedUrl = URLEncoder.encode(finalUrl, StandardCharsets.UTF_8.toString())
-                        navController.navigate("webview/$encodedUrl")
 
+                        coroutineScope.launch {
+                            dao.insertUrl(
+                                UrlEntity(
+                                    url = finalUrl,
+                                    timestamp = System.currentTimeMillis()
+                                )
+                            )
+                        }
+
+
+                        val encodedUrl = URLEncoder.encode(
+                            finalUrl,
+                            StandardCharsets.UTF_8.toString()
+                        )
+
+                        navController.navigate("webview/$encodedUrl")
                     }
                 },
                 modifier = Modifier
