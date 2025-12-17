@@ -1,5 +1,6 @@
 package com.example.assignmentorufy.ui.theme.history
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +37,12 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.assignmentorufy.data.remote.RetrofitInstance
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +53,7 @@ fun HistoryScreen(navController: NavController) {
     val dao = remember {
         AppDatabase.getDatabase(context).urlDao()
     }
+    val coroutineScope = rememberCoroutineScope()
 
     val viewModel = remember {
         HistoryViewModel(dao)
@@ -70,10 +77,27 @@ fun HistoryScreen(navController: NavController) {
                     }
                 },
                 actions = {
+
                     IconButton(onClick = { viewModel.clearHistory() }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Clear",
+                            tint = Color.White
+                        )
+                    }
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            RetrofitInstance.api.uploadHistory(viewModel.historyList)
+                            Toast.makeText(
+                                context,
+                                "History uploaded successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.CloudUpload,
+                            contentDescription = "Upload",
                             tint = Color.White
                         )
                     }
