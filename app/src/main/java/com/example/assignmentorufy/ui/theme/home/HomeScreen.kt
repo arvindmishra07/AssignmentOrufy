@@ -18,7 +18,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -166,7 +165,7 @@ fun ImageCarousel() {
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))   // 👈 rounded corners
+                    .clip(RoundedCornerShape(16.dp))
                     .background(Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
